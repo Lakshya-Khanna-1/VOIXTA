@@ -1,59 +1,20 @@
-# VoiceGuard — AI Scam Call Detector (Prototype v0.1)
+# Voixta
 
-Real-time AI-powered scam call detection. Speak like a scammer. Watch it get caught. Zero data leaves your device.
+Voixta is a three-minute scam-call rehearsal for two people. Practise ending a suspicious call, telling someone you trust, and verifying the caller independently. The web app offers English and Hindi, a captions-only mode, and a downloadable family call plan.
 
-## Quick Start
+## Run locally
 
-### Mac / Linux
-```bash
-chmod +x setup.sh && ./setup.sh
-```
+Use Node.js 20.9 or newer.
 
-### Windows
-Double-click `setup.bat`
-
-Open: **http://localhost:3000** in Chrome or Edge.
-
-## Manual Start
-```bash
-npm install
+```sh
+npm ci
 npm run dev
 ```
 
-## What It Detects
+Open [http://localhost:3000](http://localhost:3000).
 
-| Scam | Type |
-|------|------|
-| 🚨 Digital Arrest | CBI/ED fake arrest threats |
-| 🏦 OTP / Bank Fraud | Fake bank KYC calls |
-| 📦 Courier Scam | Fake customs/FedEx calls |
-| 💰 Investment Fraud | Guaranteed returns schemes |
-| 🎰 Lottery Scam | KBC/Amazon fake prizes |
-| 💻 Tech Support | Fake Microsoft/Apple calls |
+## Production
 
-## How to Use
+`npm run build` exports a static site to `out/`. Serve that directory with any static file server or deploy its contents to Embarko. The rehearsal uses bundled audio and runs without accounts, microphone access, or an AI service.
 
-- **Voice Mode:** Click mic → speak a scam script → watch it get flagged
-- **Text Mode:** Paste any scam script → click Analyze
-- **Example Scripts:** Click any of the 6 presets to test instantly
-
-## Tech Stack
-
-- Next.js 14 (App Router)
-- React 18 + Tailwind CSS
-- Web Speech API (on-device transcription)
-- Web Audio API + Canvas (waveform)
-
-## Privacy
-
-No audio recorded. No data sent anywhere. All AI runs in your browser.
-
-## Browser Support
-
-Chrome and Edge only for voice mode (Web Speech API).
-Firefox/Safari → use Text Mode.
-
-## Report Real Scams
-
-- Website: cybercrime.gov.in
-- Helpline: **1930**
+The call is fictional. Its prevention guidance is based on [CERT-In’s advisory](https://www.csk.gov.in/documents/CERT-In-AI-Booklet-NCSAM-2026.pdf) and [the Department of Telecommunications’ reporting guidance](https://pib.gov.in/PressReleaseIframePage.aspx?PRID=2067113). The English and Hindi practice voices were synthesized with [Kokoro-82M](https://huggingface.co/hexgrad/Kokoro-82M). The font licenses are in `public/fonts/`.
