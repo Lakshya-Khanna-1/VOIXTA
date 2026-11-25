@@ -95,7 +95,7 @@ export default function Detector({ locale, titleRef, onPractice }) {
         try {
           const audio = await decodeRecording(new Blob(chunks, { type: recording.mimeType }));
           if (generation.current !== run) return;
-          const transcribe = await loadTranscriber();
+          const transcribe = await loadTranscriber(language);
           if (generation.current !== run) return;
           const transcript = (await transcribe(audio, { language, task: 'transcribe' })).text.trim();
           if (generation.current !== run) return;

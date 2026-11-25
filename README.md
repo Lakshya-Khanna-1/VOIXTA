@@ -20,7 +20,7 @@ Open [http://localhost:3000](http://localhost:3000).
 ## Detection
 
 - The detector uses a trained linear classifier with word and character features, alongside checks for explicit requests, threats, secrecy, and precautions. Its three verdicts describe evidence in the sample. Caller and sender identities need independent verification.
-- Speech transcription uses the quantized multilingual [Whisper Tiny](https://huggingface.co/onnx-community/whisper-tiny) model in the browser. The first recording may need a model download. Audio and messages are processed locally.
+- Speech transcription runs in the browser with quantized [Whisper Tiny](https://huggingface.co/onnx-community/whisper-tiny) for English and the [Hinglish Whisper Tiny fine-tune](https://huggingface.co/MaybeSomeone19/whisper-tiny-hinglish-onnx) for Hindi. The Hindi model produces Roman-script transcripts. The first recording in a language may need a model download. Audio and messages are processed locally.
 - The classifier was trained on 1,068 English, Hindi and Hinglish rows from the CC BY 4.0 [Indian Scam SMS Synthetic Audited dataset](https://huggingface.co/datasets/Ridham115/indian-scam-sms-synthetic-audited). A stratified 267-row synthetic holdout for the classifier had 120 true negatives, 126 true positives, 13 false positives and 8 false negatives. These numbers precede the context checks and do not measure real-world fraud or live call performance.
 - Run the regression checks with `node model/detector.test.mjs`. Regenerate the weights with `python model/train.py` after installing scikit-learn.
 
