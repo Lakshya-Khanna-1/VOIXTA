@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { analyzeMessage } from '../lib/detector.mjs';
+import { analyzeMessage, needsContextModel } from '../lib/detector.mjs';
 
 const weights = JSON.parse(readFileSync(new URL('../public/detector-model.json', import.meta.url)));
 const cases = [
@@ -19,9 +19,26 @@ const cases = [
   ['sms', 'आपका खाता बंद हो जाएगा। इस लिंक पर अपना ओटीपी दर्ज करें।', 'risk'],
   ['call', 'OTP mat batao.', 'clear'],
   ['call', 'Caller ne kaha ki OTP batao.', 'risk'],
+  ['sms', 'Be aware of digital arrest scams', 'clear'],
+  ['sms', 'Watch out for calls that claim you are under arrest.', 'clear'],
+  ['sms', 'Stay alert to fraudsters asking you to pay a fine.', 'clear'],
+  ['sms', 'डिजिटल अरेस्ट की धोखाधड़ी से सावधान रहें।', 'clear'],
+  ['sms', 'Digital arrest fraud se savdhan rahein.', 'clear'],
+  ['sms', 'Beware of scams. Send me your OTP so I can protect your account.', 'risk'],
+  ['sms', 'Be aware of scams and send me your OTP.', 'risk'],
+  ['sms', 'Never share your OTP except with our agent.', 'risk'],
+  ['sms', 'Be aware of digital arrest scams, text me the number.', 'review'],
+  ['call', 'We have a warrant. Do not tell anyone until you pay the fine.', 'risk'],
+  ['call', 'This caller says I will be arrested today.', 'review'],
 ];
 
 for (const [mode, message, expectation] of cases) {
   assert.equal(analyzeMessage(message, mode, weights).level, expectation, message);
 }
+const screenshotCase = analyzeMessage('Be aware of digital arrest scams', 'sms', weights);
+assert.equal(screenshotCase.context, 'advice');
+assert.deepEqual(screenshotCase.evidence, []);
+const paraphrase = 'Here is a reminder that fraudsters use fake arrest warrants to scare people.';
+assert.equal(needsContextModel(paraphrase, analyzeMessage(paraphrase, 'sms', weights)), true);
+assert.equal(needsContextModel('This caller asked me to send money.', analyzeMessage('This caller asked me to send money.', 'call', weights)), false);
 console.log(`Passed ${cases.length} behavioral checks`);

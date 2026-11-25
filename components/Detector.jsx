@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { analyzeMessage } from '../lib/detector.mjs';
+import { analyzeMessage, needsContextModel } from '../lib/detector.mjs';
 import { detectorCopy } from '../lib/detectorCopy';
 import { decodeRecording, loadTranscriber } from '../lib/speech';
 
@@ -57,7 +57,19 @@ export default function Detector({ locale, titleRef, onPractice }) {
     setState('working');
     try {
       const model = await loadClassifier();
-      if (generation.current === run) setResult(analyzeMessage(value, mode, model));
+      if (generation.current !== run) return;
+      const preliminary = analyzeMessage(value, mode, model);
+      let verdict = preliminary;
+      if (needsContextModel(value, preliminary)) {
+        setState('checking-context');
+        try {
+          const { interpretReview } = await import('../lib/intent.mjs');
+          verdict = await interpretReview(value, preliminary);
+        } catch {
+          // Keep the cautious result when the optional model is unavailable.
+        }
+      }
+      if (generation.current === run) setResult(verdict);
     } catch {
       if (generation.current === run) setError(copy.modelError);
     } finally {
@@ -166,10 +178,11 @@ export default function Detector({ locale, titleRef, onPractice }) {
         }} />
         <button type="submit" className="button button-outline" disabled={busy || !text.trim()}>{copy.check}</button>
       </form>
+      {state === 'checking-context' && <p role="status" className="speech-status">{copy.contextLoading}</p>}
       {error && <p role="alert" className="detector-error">{error}</p>}
       {result && (
         <section ref={resultSection} tabIndex={-1} aria-labelledby="verdict" className={`detector-result result-${result.level}`}>
-          <h2 id="verdict">{copy[result.level]}</h2>
+          <h2 id="verdict">{result.level === 'clear' && result.context === 'advice' ? copy.awarenessTitle : copy[result.level]}</h2>
           <p>{copy[result.context && result.level === 'clear' ? result.context : `${result.level}Text`]}</p>
           {result.evidence.length > 0 && (
             <>
