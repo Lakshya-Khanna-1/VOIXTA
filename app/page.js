@@ -1,7 +1,9 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import Detector from '../components/Detector';
 import FamilyCard from '../components/FamilyCard';
+import { detectorCopy } from '../lib/detectorCopy';
 import { rehearsal } from '../lib/rehearsal';
 
 function Cord() {
@@ -32,6 +34,7 @@ export default function Home() {
   const title = useRef(null);
   const hasNavigated = useRef(false);
   const copy = rehearsal[locale];
+  const demo = detectorCopy[locale];
 
   useEffect(() => {
     document.documentElement.lang = locale;
@@ -108,8 +111,8 @@ export default function Home() {
           <span>Voixta</span>
         </button>
         {home ? (
-          <nav aria-label={copy.how} className="top-nav">
-            <a className="how-link" href="#how-it-works">{copy.how}</a>
+          <nav aria-label={demo.works} className="top-nav">
+            <a className="how-link" href="#how-it-works">{demo.works}</a>
             <div className="languages" aria-label="Language / भाषा">
               <button type="button" lang="en" aria-pressed={locale === 'en'} onClick={() => setLocale('en')}>English</button>
               <span aria-hidden="true">/</span>
@@ -125,20 +128,23 @@ export default function Home() {
         <main className="shell" id="main-content">
           <section className="hero">
             <div className="hero-copy">
-              <h1 ref={title} tabIndex={-1}>{copy.homeTitle}</h1>
-              <p className="hero-intro">{copy.homeIntro}</p>
-              <button type="button" className="button button-primary hero-button" onClick={() => go('ready')}>
-                {copy.start}<Arrow />
+              <h1 ref={title} tabIndex={-1}>{demo.homeTitle}</h1>
+              <p className="hero-intro">{demo.homeIntro}</p>
+              <button type="button" className="button button-primary hero-button" onClick={() => go('detector')}>
+                {demo.start}<Arrow />
               </button>
               <div className="hero-meta">
-                <p className="fine">{copy.homeNote}</p>
+                <p className="fine">{demo.note}</p>
                 <button type="button" className="text-button" onClick={() => go('help')}>{copy.help}</button>
               </div>
             </div>
             <img className="hero-art" src="/images/handset.webp" width="1220" height="916" fetchPriority="high" alt="" />
           </section>
-          <section className="protocol" id="how-it-works" aria-label={copy.how}>
-            {copy.howLines.map(([label, description]) => (
+          <div className="practice-bar">
+            <button type="button" className="text-button" onClick={() => go('ready')}>{demo.practice}</button>
+          </div>
+          <section className="protocol" id="how-it-works" aria-label={demo.works}>
+            {demo.protocol.map(([label, description]) => (
               <div key={label}>
                 <h2>{label}</h2>
                 <p>{description}</p>
@@ -148,6 +154,8 @@ export default function Home() {
         </main>
       ) : (
         <main className={`flow stage-${stage}`} id="main-content">
+          {stage === 'detector' && <Detector locale={locale} titleRef={title} onPractice={() => go('ready')} />}
+
           {stage === 'ready' && (
             <>
               <h1 ref={title} tabIndex={-1}>{copy.prep}</h1>

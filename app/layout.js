@@ -1,8 +1,8 @@
 import './globals.css';
 
 export const metadata = {
-  title: 'Voixta | Practise the call after the scam call',
-  description: 'A three-minute scam-call rehearsal for you and someone you trust. Practise in English or Hindi.',
+  title: 'Voixta | Check a suspicious call or SMS',
+  description: 'Speak a sample call or paste a text message. Voixta analyzes the request on your device in English or Hindi.',
 };
 
 export const viewport = { themeColor: '#f6f1e7' };
